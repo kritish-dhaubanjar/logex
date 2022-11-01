@@ -46,11 +46,11 @@ function logger() {
   PROJECT=$(basename $PROJECT_PATH)
 
   cd $PROJECT_PATH
-  LOG=$(git log --author="$AUTHOR" --all --no-merges --pretty=format:%s --after="$DATE 00:00" --before="$DATE 23:59" | sed 's/^/        - /')
+  LOG=$(git log --author="$AUTHOR" --all --no-merges --pretty=format:%s --after="$DATE 00:00" --before="$DATE 23:59" | sed 's/^/- /')
 
   if [[ ! -z $LOG ]]; then
     echo 1
-    echo -e "    $PROJECT" >&2
+    echo -e "\033[0;34m\033[1m$PROJECT\033[0m" >&2
     echo -e "$LOG\n" >&2
   else
     echo 0
@@ -70,7 +70,7 @@ if [[ $PROJECT_ROOT_IS_GIT ]]; then
 
   for ((i = $DAYS - 1; i >= 0; i--)); do
     DATE=$(date -d "$TODAY - $i day" +%F)
-    echo -e "$DATE"
+    echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
     COUNT=$(logger $DATE "$AUTHOR" $PROJECT_ROOT)
 
     if [[ $COUNT -eq 0 ]]; then
@@ -85,7 +85,7 @@ else
   for ((i = $DAYS - 1; i >= 0; i--)); do
     COUNT=0
     DATE=$(date -d "$TODAY - $i day" +%F)
-    echo -e "$DATE"
+    echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
 
     for j in ${!PROJECTS[@]}; do
       PROJECT_PATH=${PROJECTS[$j]}
