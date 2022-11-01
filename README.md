@@ -3,5 +3,4 @@ Bash script to log and organize git-logs by date & repository, inspired from [lo
 
 #### Preview:
 
-https://user-images.githubusercontent.com/25634165/199109556-317975a8-05d5-4150-ae76-a293321023db.mp4
-
+![logex-colors](https://user-images.githubusercontent.com/25634165/199158501-f86241f2-a988-41e2-a397-7a9df95fc618.png)
