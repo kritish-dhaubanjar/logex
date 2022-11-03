@@ -6,6 +6,9 @@ Bash script to log and organize git-logs by date & repository, inspired from [lo
 sudo curl -L https://raw.githubusercontent.com/kritish-dhaubanjar/logex/main/logex.sh -o /usr/local/bin/logex && sudo chmod +x /usr/local/bin/logex
 ```
 
+Depends on:
+- `git config user.name`
+
 #### Uninstall:
 ```shell
 sudo rm /usr/local/bin/logex
