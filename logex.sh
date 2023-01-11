@@ -46,7 +46,7 @@ function logger() {
   PROJECT=$(basename $PROJECT_PATH)
 
   cd $PROJECT_PATH
-  LOG=$(git log --author="$AUTHOR" --all --no-merges --pretty=format:%s --after="$DATE 00:00" --before="$DATE 23:59" | sed 's/^/- /')
+  LOG=$(git log --author="$AUTHOR" --all --no-merges --pretty=format:%s --after="$DATE 00:00" --before="$DATE 23:59" | sed 's/^/• /')
 
   if [[ ! -z $LOG ]]; then
     echo 1
