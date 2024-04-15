@@ -16,6 +16,21 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+function getDate() {
+  i=$1
+  TODAY=$(date +%F)
+
+  # Check if the operating system is macOS or Linux
+  if [[ $(uname) == "Darwin" ]]; then
+      # macOS
+      DATE=$(date -v "-$i"d +%F)
+  else
+      DATE=$(date -d "$TODAY - $i day" +%F)
+  fi
+
+  echo $DATE
+}
+
 function setProjectRoot() {
   PROJECT_ROOT=$1
 
@@ -65,11 +80,11 @@ cd $PROJECT_ROOT
 PROJECT_ROOT_IS_GIT=$(git rev-parse --is-inside-work-tree 2>/dev/null)
 
 if [[ $PROJECT_ROOT_IS_GIT ]]; then
-  TODAY=$(date +%F)
   DATE=$(date +%F)
 
   for ((i = $DAYS - 1; i >= 0; i--)); do
-    DATE=$(date -d "$TODAY - $i day" +%F)
+    DATE==$(getDate ${i})
+
     echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
     COUNT=$(logger $DATE "$AUTHOR" $PROJECT_ROOT)
 
@@ -79,12 +94,11 @@ if [[ $PROJECT_ROOT_IS_GIT ]]; then
   done
 else
   PROJECTS=($(ls -d "$PROJECT_ROOT"/*/))
-  TODAY=$(date +%F)
   DATE=$(date +%F)
 
   for ((i = $DAYS - 1; i >= 0; i--)); do
     COUNT=0
-    DATE=$(date -d "$TODAY - $i day" +%F)
+    DATE=$(getDate ${i})
     echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
 
     for j in ${!PROJECTS[@]}; do
