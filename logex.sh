@@ -84,8 +84,18 @@ if [[ $PROJECT_ROOT_IS_GIT ]]; then
     read -r PROJECT LOG <<< $(logger $DATE "$AUTHOR" $PROJECT_ROOT)
 
     if [[ ! -z $PROJECT ]]; then
-      echo "$DATE"
-      echo $PROJECT
+      if [ -t 1 ]; then
+        echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
+      else
+        echo "$DATE"
+      fi
+
+      if [ -t 1 ]; then
+        echo -e "\033[0;34m\033[1m$PROJECT\033[0m"
+      else
+        echo $PROJECT
+      fi
+
       echo -e "$LOG\n"
     fi
   done
@@ -108,11 +118,21 @@ else
 
         if [[ ! -z $PROJECT ]]; then
           if [[ $FLAG == false ]]; then
-            echo -e "$DATE"
+            if [ -t 1 ]; then
+              echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
+            else
+              echo "$DATE"
+            fi
+
             FLAG=true
           fi
 
-          echo $PROJECT
+          if [ -t 1 ]; then
+            echo -e "\033[0;34m\033[1m$PROJECT\033[0m"
+          else
+            echo $PROJECT
+          fi
+
           echo -e "$LOG\n"
         fi
       fi
