@@ -64,7 +64,7 @@ function logger() {
   LOG=$(git log --author="$AUTHOR" --all --no-merges --pretty=format:%s --after="$DATE 00:00" --before="$DATE 23:59" | sed 's/^/• /')
 
   if [[ ! -z $LOG ]]; then
-    echo "$PROJECT" "$LOG"
+    echo "$LOG"
   fi
 }
 
@@ -81,9 +81,10 @@ if [[ $PROJECT_ROOT_IS_GIT ]]; then
   for ((i = $DAYS - 1; i >= 0; i--)); do
     DATE=$(getDate ${i})
 
-    read -r PROJECT LOG <<< $(logger $DATE "$AUTHOR" $PROJECT_ROOT)
+    PROJECT=$(basename $PROJECT_ROOT)
+    LOGS=$(logger $DATE "$AUTHOR" $PROJECT_ROOT)
 
-    if [[ ! -z $PROJECT ]]; then
+    if [[ ! -z $LOGS ]]; then
       if [ -t 1 ]; then
         echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
       else
@@ -93,10 +94,10 @@ if [[ $PROJECT_ROOT_IS_GIT ]]; then
       if [ -t 1 ]; then
         echo -e "\033[0;34m\033[1m$PROJECT\033[0m"
       else
-        echo $PROJECT
+        echo "$PROJECT"
       fi
 
-      echo -e "$LOG\n"
+      echo -e "$LOGS\n"
     fi
   done
 else
@@ -114,9 +115,10 @@ else
       PROJECT_ROOT_IS_GIT=$(git rev-parse --is-inside-work-tree 2>/dev/null)
 
       if [[ $PROJECT_ROOT_IS_GIT ]]; then
-        read -r PROJECT LOG <<< $(logger $DATE "$AUTHOR" $PROJECT_PATH)
+        PROJECT=$(basename $PROJECT_PATH)
+        LOGS=$(logger $DATE "$AUTHOR" $PROJECT_PATH)
 
-        if [[ ! -z $PROJECT ]]; then
+        if [[ ! -z $LOGS ]]; then
           if [[ $FLAG == false ]]; then
             if [ -t 1 ]; then
               echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
@@ -133,7 +135,7 @@ else
             echo $PROJECT
           fi
 
-          echo -e "$LOG\n"
+          echo -e "$LOGS\n"
         fi
       fi
     done
