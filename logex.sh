@@ -76,70 +76,46 @@ cd $PROJECT_ROOT
 PROJECT_ROOT_IS_GIT=$(git rev-parse --is-inside-work-tree 2>/dev/null)
 
 if [[ $PROJECT_ROOT_IS_GIT ]]; then
-  DATE=$(date +%F)
-
-  for ((i = $DAYS - 1; i >= 0; i--)); do
-    DATE=$(getDate ${i})
-
-    PROJECT=$(basename $PROJECT_ROOT)
-    LOGS=$(logger $DATE "$AUTHOR" $PROJECT_ROOT)
-
-    if [[ ! -z $LOGS ]]; then
-      if [ -t 1 ]; then
-        echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
-      else
-        echo "$DATE"
-      fi
-
-      if [ -t 1 ]; then
-        echo -e "\033[0;34m\033[1m$PROJECT\033[0m"
-      else
-        echo "$PROJECT"
-      fi
-
-      echo -e "$LOGS\n"
-    fi
-  done
+  PROJECTS=($PROJECT_ROOT)
 else
   PROJECTS=($(ls -d "$PROJECT_ROOT"/*/))
-  DATE=$(date +%F)
-
-  for ((i = $DAYS - 1; i >= 0; i--)); do
-    FLAG=false
-    DATE=$(getDate ${i})
-
-    for j in ${!PROJECTS[@]}; do
-      PROJECT_PATH=${PROJECTS[$j]}
-
-      cd $PROJECT_PATH
-      PROJECT_ROOT_IS_GIT=$(git rev-parse --is-inside-work-tree 2>/dev/null)
-
-      if [[ $PROJECT_ROOT_IS_GIT ]]; then
-        PROJECT=$(basename $PROJECT_PATH)
-        LOGS=$(logger $DATE "$AUTHOR" $PROJECT_PATH)
-
-        if [[ ! -z $LOGS ]]; then
-          if [[ $FLAG == false ]]; then
-            if [ -t 1 ]; then
-              echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
-            else
-              echo "$DATE"
-            fi
-
-            FLAG=true
-          fi
-
-          if [ -t 1 ]; then
-            echo -e "\033[0;34m\033[1m$PROJECT\033[0m"
-          else
-            echo $PROJECT
-          fi
-
-          echo -e "$LOGS\n"
-        fi
-      fi
-    done
-
-    FLAG=false
-  done
 fi
+
+for ((i = $DAYS - 1; i >= 0; i--)); do
+  FLAG=false
+  DATE=$(getDate ${i})
+
+  for j in ${!PROJECTS[@]}; do
+    PROJECT_PATH=${PROJECTS[$j]}
+
+    cd $PROJECT_PATH
+    PROJECT_ROOT_IS_GIT=$(git rev-parse --is-inside-work-tree 2>/dev/null)
+
+    if [[ $PROJECT_ROOT_IS_GIT ]]; then
+      PROJECT=$(basename $PROJECT_PATH)
+      LOGS=$(logger $DATE "$AUTHOR" $PROJECT_PATH)
+
+      if [[ ! -z $LOGS ]]; then
+        if [[ $FLAG == false ]]; then
+          if [ -t 1 ]; then
+            echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
+          else
+            echo "$DATE"
+          fi
+
+          FLAG=true
+        fi
+
+        if [ -t 1 ]; then
+          echo -e "\033[0;34m\033[1m$PROJECT\033[0m"
+        else
+          echo $PROJECT
+        fi
+
+        echo -e "$LOGS\n"
+      fi
+    fi
+  done
+
+  FLAG=false
+done
