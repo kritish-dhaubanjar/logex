@@ -1,5 +1,15 @@
 #!/bin/bash
 
+function help (){
+  echo "Usage: logex [OPTION]... [FILE]
+logex - Bash script to log and organize git-logs by date & repository.
+
+Options:
+  -d, --days       set number of days to log
+  -a, --author     set commit author to log (git config user.name)
+  -h, --help       display this help and exit"
+}
+
 POSITIONAL_ARGS=()
 
 while [[ $# -gt 0 ]]; do
@@ -13,6 +23,10 @@ while [[ $# -gt 0 ]]; do
     AUTHOR="$2"
     shift
     shift
+  ;;
+  -h | --help)
+    help
+    exit 0
   ;;
   *)
     POSITIONAL_ARGS+=("$1")
