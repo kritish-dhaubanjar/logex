@@ -9,6 +9,11 @@ while [[ $# -gt 0 ]]; do
     shift
     shift
     ;;
+  -a | --author)
+    AUTHOR="$2"
+    shift
+    shift
+  ;;
   *)
     POSITIONAL_ARGS+=("$1")
     shift
@@ -47,16 +52,6 @@ function setProjectRoot() {
   echo $PROJECT_ROOT
 }
 
-function setDays() {
-  DAYS=$1
-
-  if [[ -z $DAYS ]]; then
-    DAYS=1
-  fi
-
-  echo $DAYS
-}
-
 function logger() {
   DATE=$1
   AUTHOR=$2
@@ -71,8 +66,8 @@ function logger() {
   fi
 }
 
-DAYS=$(setDays $DAYS)
-AUTHOR=$(git config user.name)
+DAYS=${DAYS:-1}
+AUTHOR=${AUTHOR:-$(git config user.name)}
 PROJECT_ROOT=$(setProjectRoot ${POSITIONAL_ARGS[0]})
 
 if [[ $? -ne 0 ]]; then
