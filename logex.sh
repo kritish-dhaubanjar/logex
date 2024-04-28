@@ -39,6 +39,9 @@ function setProjectRoot() {
   elif [[ ! -d $PROJECT_ROOT ]]; then
     echo "$PROJECT_ROOT: No such file or directory"
     exit 1
+  else
+    cd $PROJECT_ROOT
+    PROJECT_ROOT=$(pwd)
   fi
 
   echo $PROJECT_ROOT
@@ -72,13 +75,17 @@ DAYS=$(setDays $DAYS)
 AUTHOR=$(git config user.name)
 PROJECT_ROOT=$(setProjectRoot ${POSITIONAL_ARGS[0]})
 
+if [[ $? -ne 0 ]]; then
+  exit 1
+fi
+
 cd $PROJECT_ROOT
 PROJECT_ROOT_IS_GIT=$(git rev-parse --is-inside-work-tree 2>/dev/null)
 
 if [[ $PROJECT_ROOT_IS_GIT ]]; then
   PROJECTS=($PROJECT_ROOT)
 else
-  PROJECTS=($(ls -d "$PROJECT_ROOT"/*/))
+  PROJECTS=($(ls -d $PROJECT_ROOT/*/))
 fi
 
 for ((i = $DAYS - 1; i >= 0; i--)); do
