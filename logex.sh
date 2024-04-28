@@ -37,14 +37,13 @@ done
 
 function getDate() {
   i=$1
-  TODAY=$(date +%F)
 
   # Check if the operating system is macOS or Linux
   if [[ $(uname) == "Darwin" ]]; then
       # macOS
       DATE=$(date -v "-$i"d +%F)
   else
-      DATE=$(date -d "$TODAY - $i day" +%F)
+      DATE=$(date -d "- $i day" +%F)
   fi
 
   echo $DATE
