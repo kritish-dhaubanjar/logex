@@ -116,20 +116,12 @@ for ((i = $DAYS - 1; i >= 0; i--)); do
     fi
 
     if [[ $FLAG == false ]]; then
-      if [ -t 1 ]; then
-        echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m"
-      else
-        echo "$DATE"
-      fi
+      [ -t 1 ] && echo -e "\033[0;33m\033[1m\033[4m$DATE\033[0m" || echo "$DATE"
 
       FLAG=true
     fi
 
-    if [ -t 1 ]; then
-      echo -e "\033[0;34m\033[1m$PROJECT\033[0m"
-    else
-      echo $PROJECT
-    fi
+    [ -t 1 ] && echo -e "\033[0;34m\033[1m$PROJECT\033[0m" || echo $PROJECT
 
     echo -e "$LOGS\n"
   done
