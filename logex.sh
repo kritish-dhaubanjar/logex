@@ -67,7 +67,6 @@ function logger() {
   DATE=$1
   AUTHOR=$2
   PROJECT_PATH=$3
-  PROJECT=$(basename $PROJECT_PATH)
 
   cd $PROJECT_PATH
   LOG=$(git log --author="$AUTHOR" --all --no-merges --pretty=format:%s --after="$DATE 00:00" --before="$DATE 23:59" | sed 's/^/• /')
