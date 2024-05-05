@@ -97,9 +97,7 @@ for ((i = $DAYS - 1; i >= 0; i--)); do
   FLAG=false
   DATE=$(getDate ${i})
 
-  for j in ${!PROJECTS[@]}; do
-    PROJECT_PATH=${PROJECTS[$j]}
-
+  for PROJECT_PATH in ${PROJECTS[@]}; do
     cd $PROJECT_PATH
     PROJECT_ROOT_IS_GIT=$(git rev-parse --is-inside-work-tree 2>/dev/null)
 
