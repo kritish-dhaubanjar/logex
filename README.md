@@ -28,4 +28,4 @@ Options:
 
 #### Preview:
 
-![logex-colors](https://user-images.githubusercontent.com/25634165/199158501-f86241f2-a988-41e2-a397-7a9df95fc618.png)
+![logex](https://github.com/kritish-dhaubanjar/logex/assets/25634165/728eec62-88ed-41d9-9a95-3cd9f36b664f)
