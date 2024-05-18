@@ -1,6 +1,5 @@
 #!/bin/bash
-
-function help (){
+function help() {
   echo "Usage: logex [OPTION]... [FILE]
 logex - Bash script to log and organize git-logs by date & repository.
 
@@ -69,11 +68,34 @@ function logger() {
   PROJECT_PATH=$3
 
   cd $PROJECT_PATH
-  LOG=$(git log --author="$AUTHOR" --all --no-merges --pretty=format:%s --after="$DATE 00:00" --before="$DATE 23:59" | sed 's/^/• /')
+  LOG=$(git log --author="$AUTHOR" --all --no-merges --pretty=format:%s --after="$DATE 00:00" --before="$DATE 23:59")
 
   if [[ ! -z $LOG ]]; then
     echo "$LOG"
   fi
+}
+
+function reducer() {
+  LOGS="$1"
+  declare -A LOG_GROUPS=()
+  IFS=$"\n" readarray -t LOGS <<< "$LOGS"
+
+  for LOG in "${LOGS[@]}"; do
+    if [[ $LOG =~ ^([A-Z]+-[0-9]+): ]]; then
+      KEY=${BASH_REMATCH[1]}
+      LOG_GROUPS[$KEY]+=$([[ -z ${LOG_GROUPS[$KEY]} ]] && echo "• $LOG\n" || echo $(sed "s/$KEY: //" <<< "\b \b ◦ $LOG\n"))
+    else
+      LOG_GROUPS['~']+="• $LOG\n"
+    fi
+  done
+
+  OUTPUT=""
+
+  for KEY in "${!LOG_GROUPS[@]}"; do
+    OUTPUT+="${LOG_GROUPS[$KEY]}"
+  done
+
+  echo "$OUTPUT"
 }
 
 DAYS=${DAYS:-1}
@@ -120,7 +142,9 @@ for ((i = $DAYS - 1; i >= 0; i--)); do
 
     [ -t 1 ] && echo -e "\033[0;34m\033[1m$PROJECT\033[0m" || echo $PROJECT
 
-    echo -e "$LOGS\n"
+    LOG_GROUPS=$(reducer "$LOGS")
+
+    echo -e "$LOG_GROUPS"
   done
 
   FLAG=false
