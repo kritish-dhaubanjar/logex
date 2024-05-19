@@ -23,6 +23,8 @@ logex - Bash script to log and organize git-logs by date & repository.
 Options:
   -d, --days       set number of days to log
   -a, --author     set commit author to log (git config user.name)
+  -v, --version    print logex version
+  -u, --update     update logex
   -h, --help       display this help and exit
 ```
 
