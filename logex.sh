@@ -1,4 +1,7 @@
 #!/bin/bash
+
+VERSION="logex version 1.0.0"
+
 function help() {
   echo "Usage: logex [OPTION]... [FILE]
 logex - Bash script to log and organize git-logs by date & repository.
@@ -6,6 +9,7 @@ logex - Bash script to log and organize git-logs by date & repository.
 Options:
   -d, --days       set number of days to log
   -a, --author     set commit author to log (git config user.name)
+  -v, --version    print logex version
   -h, --help       display this help and exit"
 }
 
@@ -22,6 +26,10 @@ while [[ $# -gt 0 ]]; do
     AUTHOR="$2"
     shift
     shift
+    ;;
+  -v | --version)
+    echo $VERSION
+    exit 0
     ;;
   -h | --help)
     help
