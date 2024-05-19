@@ -22,11 +22,11 @@ while [[ $# -gt 0 ]]; do
     AUTHOR="$2"
     shift
     shift
-  ;;
+    ;;
   -h | --help)
     help
     exit 0
-  ;;
+    ;;
   *)
     POSITIONAL_ARGS+=("$1")
     shift
