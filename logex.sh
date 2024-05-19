@@ -10,7 +10,16 @@ Options:
   -d, --days       set number of days to log
   -a, --author     set commit author to log (git config user.name)
   -v, --version    print logex version
+  -u, --update     update logex
   -h, --help       display this help and exit"
+}
+
+function update() {
+  echo "sudo rm /usr/local/bin/logex"
+  sudo rm /usr/local/bin/logex
+
+  echo "sudo curl -L https://raw.githubusercontent.com/kritish-dhaubanjar/logex/main/logex.sh -o /usr/local/bin/logex && sudo chmod +x /usr/local/bin/logex"
+  sudo curl -L https://raw.githubusercontent.com/kritish-dhaubanjar/logex/main/logex.sh -o /usr/local/bin/logex && sudo chmod +x /usr/local/bin/logex
 }
 
 POSITIONAL_ARGS=()
@@ -33,6 +42,10 @@ while [[ $# -gt 0 ]]; do
     ;;
   -h | --help)
     help
+    exit 0
+    ;;
+  -u | --update)
+    update
     exit 0
     ;;
   *)
