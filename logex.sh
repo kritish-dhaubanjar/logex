@@ -91,7 +91,7 @@ function reducer() {
   for LOG in "${LOGS[@]}"; do
     if [[ $LOG =~ ^([A-Z]+-[0-9]+): ]]; then
       KEY=${BASH_REMATCH[1]}
-      LOG_GROUPS[$KEY]+=$([[ -z ${LOG_GROUPS[$KEY]} ]] && echo "• $LOG\n" || echo $(sed "s/$KEY: //" <<< "\b \b ◦ $LOG\n"))
+      LOG_GROUPS[$KEY]+=$([[ -z ${LOG_GROUPS[$KEY]} ]] && echo "• $LOG\n" || echo "  ◦ $(sed "s/$KEY: //" <<< "$LOG\n")")
     else
       LOG_GROUPS['~']+="• $LOG\n"
     fi
