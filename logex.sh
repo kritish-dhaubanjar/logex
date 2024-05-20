@@ -99,14 +99,16 @@ function logger() {
 function reducer() {
   LOGS="$1"
   declare -A LOG_GROUPS=()
-  IFS=$"\n" readarray -t LOGS <<< "$LOGS"
 
-  for LOG in "${LOGS[@]}"; do
+  IFS=$'\n' read -r -d '' -a LOG_ARRAY <<<"$LOGS"$'\n'
+
+  for LOG in "${LOG_ARRAY[@]}"; do
     if [[ $LOG =~ ^([A-Z]+-[0-9]+:* ) ]]; then
-      KEY=${BASH_REMATCH[1]}
-      LOG_GROUPS[$KEY]+=$([[ -z ${LOG_GROUPS[$KEY]} ]] && echo "• $LOG\n" || echo "  ◦ $(sed "s/$KEY//" <<< "$LOG\n")")
+      MATCH=${BASH_REMATCH[1]}
+      LOG_KEY=$(sed 's/://' <<<"$MATCH")
+      LOG_GROUPS[$LOG_KEY]+=$([[ -z ${LOG_GROUPS[$LOG_KEY]} ]] && echo "• $LOG\n" || echo "  ◦ $(sed "s/$MATCH//" <<<"$LOG\n")")
     else
-      LOG_GROUPS['~']+="• $LOG\n"
+      LOG_GROUPS["UNTAGGED"]+="• $LOG\n"
     fi
   done
 
