@@ -98,27 +98,41 @@ function logger() {
 
 function reducer() {
   LOGS="$1"
-  declare -A LOG_GROUPS=()
-
-  IFS=$'\n' read -r -d '' -a LOG_ARRAY <<<"$LOGS"$'\n'
-
-  for LOG in "${LOG_ARRAY[@]}"; do
-    if [[ $LOG =~ ^([A-Z]+-[0-9]+:* ) ]]; then
-      MATCH=${BASH_REMATCH[1]}
-      LOG_KEY=$(sed 's/://' <<<"$MATCH")
-      LOG_GROUPS[$LOG_KEY]+=$([[ -z ${LOG_GROUPS[$LOG_KEY]} ]] && echo "• $LOG\n" || echo "  ◦ $(sed "s/$MATCH//" <<<"$LOG\n")")
-    else
-      LOG_GROUPS["UNTAGGED"]+="• $LOG\n"
-    fi
-  done
-
+  GROUP_KEYS=()
+  GROUPED_LOGS=()
+  UNGROUPED_LOGS=()
   OUTPUT=""
 
-  for KEY in "${!LOG_GROUPS[@]}"; do
-    OUTPUT+="${LOG_GROUPS[$KEY]}"
+  while IFS= read -r LOG; do
+    if [[ $LOG =~ ^([A-Z]+-[0-9]+:* ) ]]; then
+      FLAG=true
+      MATCH=${BASH_REMATCH[1]}
+
+      for INDEX in ${!GROUP_KEYS[@]}; do
+        if [[ $MATCH == ${GROUP_KEYS["$INDEX"]} ]]; then
+          FLAG=false
+          GROUPED_LOGS[$INDEX]="${GROUPED_LOGS[$INDEX]}\n    ◦ $(sed "s/$MATCH//" <<<"$LOG")"
+        fi
+      done
+
+      if [[ "$FLAG" == "true" ]]; then
+        GROUP_KEYS+=("$MATCH")
+        GROUPED_LOGS+=("• $LOG")
+      fi
+    else
+      UNGROUPED_LOGS+=("• $LOG")
+    fi
+  done <<<"$LOGS"
+
+  for LOG in "${UNGROUPED_LOGS[@]}"; do
+    OUTPUT+="$LOG\n"
   done
 
-  echo "$OUTPUT"
+  for LOG in "${GROUPED_LOGS[@]}"; do
+    OUTPUT+="$LOG\n"
+  done
+
+  echo -e "$OUTPUT"
 }
 
 DAYS=${DAYS:-1}
@@ -167,7 +181,7 @@ for ((i = $DAYS - 1; i >= 0; i--)); do
 
     LOG_GROUPS=$(reducer "$LOGS")
 
-    echo -e "$LOG_GROUPS"
+    echo -e "$LOG_GROUPS\n"
   done
 
   FLAG=false
