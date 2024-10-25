@@ -28,6 +28,16 @@ Options:
   -h, --help       display this help and exit
 ```
 
+#### Tests:
+
+Install Bats if not already installed
+
+```
+sudo apt-get install bats  # For Debian-based systems
+# or
+brew install bats-core      # For macOS
+```
+
 #### Preview:
 
 ![logex](https://github.com/kritish-dhaubanjar/logex/assets/25634165/728eec62-88ed-41d9-9a95-3cd9f36b664f)
