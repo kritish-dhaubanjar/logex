@@ -1,13 +1,25 @@
 #!/bin/bash
 
-function help (){
+VERSION="logex version 1.0.0"
+
+function help() {
   echo "Usage: logex [OPTION]... [FILE]
 logex - Bash script to log and organize git-logs by date & repository.
 
 Options:
   -d, --days       set number of days to log
   -a, --author     set commit author to log (git config user.name)
+  -v, --version    print logex version
+  -u, --update     update logex
   -h, --help       display this help and exit"
+}
+
+function update() {
+  echo "sudo rm /usr/local/bin/logex"
+  sudo rm /usr/local/bin/logex
+
+  echo "sudo curl -L https://raw.githubusercontent.com/kritish-dhaubanjar/logex/main/logex.sh -o /usr/local/bin/logex && sudo chmod +x /usr/local/bin/logex"
+  sudo curl -L https://raw.githubusercontent.com/kritish-dhaubanjar/logex/main/logex.sh -o /usr/local/bin/logex && sudo chmod +x /usr/local/bin/logex
 }
 
 POSITIONAL_ARGS=()
@@ -23,11 +35,19 @@ while [[ $# -gt 0 ]]; do
     AUTHOR="$2"
     shift
     shift
-  ;;
+    ;;
+  -v | --version)
+    echo $VERSION
+    exit 0
+    ;;
   -h | --help)
     help
     exit 0
-  ;;
+    ;;
+  -u | --update)
+    update
+    exit 0
+    ;;
   *)
     POSITIONAL_ARGS+=("$1")
     shift
@@ -69,11 +89,50 @@ function logger() {
   PROJECT_PATH=$3
 
   cd $PROJECT_PATH
-  LOG=$(git log --author="$AUTHOR" --all --no-merges --pretty=format:%s --after="$DATE 00:00" --before="$DATE 23:59" | sed 's/^/• /')
+  LOG=$(git log --author="$AUTHOR" --all --no-merges --pretty=format:%s --after="$DATE 00:00" --before="$DATE 23:59")
 
   if [[ ! -z $LOG ]]; then
     echo "$LOG"
   fi
+}
+
+function reducer() {
+  LOGS="$1"
+  GROUP_KEYS=()
+  GROUPED_LOGS=()
+  UNGROUPED_LOGS=()
+  OUTPUT=""
+
+  while IFS= read -r LOG; do
+    if [[ $LOG =~ ^([A-Z]+-[0-9]+:* ) ]]; then
+      FLAG=true
+      MATCH=${BASH_REMATCH[1]}
+
+      for INDEX in ${!GROUP_KEYS[@]}; do
+        if [[ $MATCH == ${GROUP_KEYS["$INDEX"]} ]]; then
+          FLAG=false
+          GROUPED_LOGS[$INDEX]="${GROUPED_LOGS[$INDEX]}\n    ◦ $(sed "s/$MATCH//" <<<"$LOG")"
+        fi
+      done
+
+      if [[ "$FLAG" == "true" ]]; then
+        GROUP_KEYS+=("$MATCH")
+        GROUPED_LOGS+=("• $LOG")
+      fi
+    else
+      UNGROUPED_LOGS+=("• $LOG")
+    fi
+  done <<<"$LOGS"
+
+  for LOG in "${UNGROUPED_LOGS[@]}"; do
+    OUTPUT+="$LOG\n"
+  done
+
+  for LOG in "${GROUPED_LOGS[@]}"; do
+    OUTPUT+="$LOG\n"
+  done
+
+  echo -e "$OUTPUT"
 }
 
 DAYS=${DAYS:-1}
@@ -120,7 +179,9 @@ for ((i = $DAYS - 1; i >= 0; i--)); do
 
     [ -t 1 ] && echo -e "\033[0;34m\033[1m$PROJECT\033[0m" || echo $PROJECT
 
-    echo -e "$LOGS\n"
+    LOG_GROUPS=$(reducer "$LOGS")
+
+    echo -e "$LOG_GROUPS\n"
   done
 
   FLAG=false
