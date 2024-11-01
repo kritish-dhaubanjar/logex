@@ -1,5 +1,5 @@
 # logex
-Bash script to log and organize git-logs by date & repository, inspired from [logit](https://github.com/bhattaraib58/logit) by [@bhattaraib58](https://github.com/bhattaraib58).
+Bash script to log and organize git-logs by date & repository.
 
 #### Install:
 ```shell
